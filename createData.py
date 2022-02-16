@@ -55,9 +55,9 @@ class CreateData:
                 speed_arr = cv2.resize(speed_arr, (15, 15))
 
                 # uncomment the next lines to test if road is visible if it is not make the needed adjustments
-                cv2.imshow("window", road_arr)
-                if cv2.waitKey(25) & 0xFF == ord("q"):
-                   cv2.destroyAllWindows()
+                #cv2.imshow("window", road_arr)
+                #if cv2.waitKey(25) & 0xFF == ord("q"):
+                #   cv2.destroyAllWindows()
 
 
         # return list of images as an array
@@ -85,6 +85,7 @@ class CreateData:
             key = self.key_press()          # key is an one hot encoded array
             image = self.get_screen()       # image is an array of three elements
             training_data.append([key, image])
+
             # code snippet by sentdex <3
             if len(training_data) % 500 == 0:
                 print("training files saved! frame count: {}".format(len(training_data)))
