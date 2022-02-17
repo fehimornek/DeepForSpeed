@@ -4,10 +4,8 @@ import torch.optim as optim
 import torch
 import torch.nn.functional as F
 import os
-import importlib
-import sys
 
-
+# checks if file exists
 def check_file(file):
     if os.path.exists(file):
         print("read successful! starting training")
@@ -16,7 +14,18 @@ def check_file(file):
         print("cannot read! \n make sure you dont write .npy at the end")
         return False
 
-def training(neural_net_name, data_folder_name, epochs, batches, optimizer, loss_function, learning_rate = 0.001):
+# training the neural network
+def training(data_folder_name, neural_net_name="nvidia_arch",  epochs = 10, batches= 1000, optimizer="Adam", loss_function="nll_loss", learning_rate = 0.001):
+    """
+    - data_folder_name = is a string, used for choosing training folder. If the folders name is test write test do not write its content like testX, testY
+    - neural_net_name = is a string, used for choosing model from model_architectures.py
+    - epochs = is an int, how many times neural network will see the whole data
+    - batches = is an int, how many images will be used for training at every iteration
+    - optimizer = is an int, is a string, used for picking an optimizer from pytorch.nn.optim
+    - loss_function = is a string, used for picking a loss function from pytorch.nn.F
+    - learning_rate = is a float, determines how much of an effect each gradient update has on the network
+    """
+
     # get the specified training data
     file = os.getcwd() + "\\training_data\\{}".format(data_folder_name)
     # check if the file exists,
@@ -55,15 +64,23 @@ def training(neural_net_name, data_folder_name, epochs, batches, optimizer, loss
     # training starts here
     for epoch in range(epochs):
         print("epoch: ", epoch+1)
+        # take random permutation of the data this will be used for mini batch training
         permutation = torch.randperm(len(road))
         for i in range(0, len(road), batches):
             neural_net.zero_grad()
+            # take indices using the random permutation
             indices = permutation[i:i+batches]
+            # take batches of data with the indices and then turn them into tensors because numpy arrays can't be fed to the neural net
             road_batch, minimap_batch, speed_batch = \
                 torch.tensor(road[indices]), torch.tensor(minimap[indices]), torch.tensor(speed[indices])
+            # y_batch = [0,0,0,0,0,0] sth like this and argmax turns it into y_batch = 6 this is need because the loss function expects target as an int
             y_batch = torch.argmax(torch.tensor(training_data_Y[indices]), dim=1)
-            output = neural_net.forward(road_batch/255, minimap_batch/255, speed_batch/255)  # (, minimap_batch, speed_batch)
-            loss = loss_func(output, y_batch.view(1000,))
+            # we have to turn data into float because pytorch expects data to be float type. This can be achieved by dividing by 255 which also
+            # has regularizes the data
+            output = neural_net.forward(road_batch/255, minimap_batch/255, speed_batch/255)
+            # calculate the error
+            loss = loss_func(output, y_batch)
+            # backprop thank god pytorch for that am i right? lol
             loss.backward()
             optimizer.step()
 
