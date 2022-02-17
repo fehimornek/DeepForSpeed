@@ -5,19 +5,13 @@ import torch
 import torch.nn.functional as F
 import os
 
-# checks if file exists
-def check_file(file):
-    if os.path.exists(file):
-        print("read successful! starting training")
-        return True
-    else:
-        print("cannot read! \n make sure you dont write .npy at the end")
-        return False
-
 # training the neural network
-def training(data_folder_name, neural_net_name="nvidia_arch",  epochs = 10, batches= 1000, optimizer="Adam", loss_function="nll_loss", learning_rate = 0.001):
+def training(data_folder_name, neural_net_folder="default", neural_net_name="nvidia_arch",  epochs = 10, batches= 1000, optimizer="Adam", loss_function="nll_loss", learning_rate = 0.001):
     """
-    - data_folder_name = is a string, used for choosing training folder. If the folders name is test write test do not write its content like testX, testY
+    - data_folder_name = is a string, used for choosing training folder. If the folders name is test write test do not write its
+    content like testX, testY
+    - neural_net_folder = is a string, which is the saved models name. If you write a new name instead of default it will start
+    training a new neural net.
     - neural_net_name = is a string, used for choosing model from model_architectures.py
     - epochs = is an int, how many times neural network will see the whole data
     - batches = is an int, how many images will be used for training at every iteration
@@ -26,27 +20,34 @@ def training(data_folder_name, neural_net_name="nvidia_arch",  epochs = 10, batc
     - learning_rate = is a float, determines how much of an effect each gradient update has on the network
     """
 
-    # get the specified training data
+    # get the training data
     file = os.getcwd() + "\\training_data\\{}".format(data_folder_name)
     # check if the file exists,
     # ----->if it does load it
     # ----->else end the function
-    if check_file(file):
+    if os.path.exists(file):
         training_data_X = np.load(file + f"\\{data_folder_name}X.npy", allow_pickle=True)
         training_data_Y = list(np.load(file + f"\\{data_folder_name}Y.npy", allow_pickle=True))
-        print("loaded features and labels")
     else:
         return
-    # get the specified model from model_architectures
+
+    # get the model from model_architectures
     class_neuralnet = getattr(model_architectures, neural_net_name)
     neural_net = class_neuralnet()
     print("loaded neural network: ", neural_net)
+
+    nn_file = os.getcwd() + f"\\trained_models\\{neural_net_folder}.pth"
+    if os.path.exists(nn_file):
+        neural_net.load_state_dict(torch.load(os.getcwd() + f"\\trained_models\\{neural_net_folder}.pth"))
+        print("loaded model weights of {}.pth".format(neural_net_folder))
+    else:
+        print("model weights initialized!")
+
     # get the specified optimizer from torch.optim class
     optimizer = getattr(optim, optimizer)(neural_net.parameters(), lr = learning_rate)
-
     # get the specified loss function from torch.nn.functional class
     loss_func = getattr(F, loss_function)
-    print("loaded necessary attributes for neural network")
+
     road = []
     minimap = []
     speed = []
@@ -57,10 +58,10 @@ def training(data_folder_name, neural_net_name="nvidia_arch",  epochs = 10, batc
         road.append(data[0])
         minimap.append(data[1])
         speed.append(data[2])
-    print("separation of data successful!")
-    road, minimap, speed, training_data_Y = np.array(road), np.array(minimap), np.array(speed), np.array(training_data_Y)
-    print("transformed list to arrays")
 
+    road, minimap, speed, training_data_Y = np.array(road), np.array(minimap), np.array(speed), np.array(training_data_Y)
+
+    print("starting training!")
     # training starts here
     for epoch in range(epochs):
         print("epoch: ", epoch+1)
@@ -76,7 +77,7 @@ def training(data_folder_name, neural_net_name="nvidia_arch",  epochs = 10, batc
             # y_batch = [0,0,0,0,0,0] sth like this and argmax turns it into y_batch = 6 this is need because the loss function expects target as an int
             y_batch = torch.argmax(torch.tensor(training_data_Y[indices]), dim=1)
             # we have to turn data into float because pytorch expects data to be float type. This can be achieved by dividing by 255 which also
-            # has regularizes the data
+            # regularizes the data
             output = neural_net.forward(road_batch/255, minimap_batch/255, speed_batch/255)
             # calculate the error
             loss = loss_func(output, y_batch)
@@ -84,5 +85,7 @@ def training(data_folder_name, neural_net_name="nvidia_arch",  epochs = 10, batc
             loss.backward()
             optimizer.step()
 
+    torch.save(neural_net.state_dict(), os.getcwd() + f"\\trained_models\\{neural_net_folder}.pth")
+    print("saved neural network weights!")
 
-training("nvidia_arch", "keke", 10, 1000, "Adam", "nll_loss")
+training("keke", "keke")
