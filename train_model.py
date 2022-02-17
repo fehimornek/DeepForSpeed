@@ -54,20 +54,18 @@ def training(neural_net_name, data_folder_name, epochs, batches, optimizer, loss
 
     # training starts here
     for epoch in range(epochs):
-        print("epoch: ", epoch)
+        print("epoch: ", epoch+1)
         permutation = torch.randperm(len(road))
         for i in range(0, len(road), batches):
             neural_net.zero_grad()
             indices = permutation[i:i+batches]
-            road_batch = torch.tensor(road[indices])
-            y_batch = torch.tensor(training_data_Y[indices])
-            y_batch = torch.argmax(y_batch, dim=1)
-            output = neural_net.forward(road_batch/255)  # (, minimap_batch, speed_batch)
+            road_batch, minimap_batch, speed_batch = \
+                torch.tensor(road[indices]), torch.tensor(minimap[indices]), torch.tensor(speed[indices])
+            y_batch = torch.argmax(torch.tensor(training_data_Y[indices]), dim=1)
+            output = neural_net.forward(road_batch/255, minimap_batch/255, speed_batch/255)  # (, minimap_batch, speed_batch)
             loss = loss_func(output, y_batch.view(1000,))
             loss.backward()
             optimizer.step()
 
 
 training("nvidia_arch", "keke", 10, 1000, "Adam", "nll_loss")
-
-
