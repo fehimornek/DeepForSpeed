@@ -23,7 +23,7 @@ class CreateData:
         self.last_time = time.time()
 
     def key_press(self):
-        onehotencoding = np.array([0,0,0,0,0,0])  # elements of the list on the left corresponds to [w, a, d, wa, wd, nothing]
+        onehotencoding = [0,0,0,0,0,0]  # elements of the list on the left corresponds to [w, a, d, wa, wd, nothing]
         if keyboard.is_pressed("w"):
             if keyboard.is_pressed("a"):
                 onehotencoding[3] = 1
@@ -50,9 +50,9 @@ class CreateData:
                 minimap_arr = np.array(minimap_sct)
                 speed_arr = np.array(speed_sct)
                 # resize
-                road_arr = cv2.resize(road_arr,(120,60))
-                minimap_arr = cv2.resize(minimap_arr, (50, 50))
-                speed_arr = cv2.resize(speed_arr, (15, 15))
+                road_arr = list(cv2.resize(road_arr,(120,60)))
+                minimap_arr = list(cv2.resize(minimap_arr, (50, 50)))
+                speed_arr = list(cv2.resize(speed_arr, (15, 15)))
 
                 # uncomment the next lines to test if road is visible if it is not make the needed adjustments
                 #cv2.imshow("window", road_arr)
@@ -60,8 +60,8 @@ class CreateData:
                 #   cv2.destroyAllWindows()
 
 
-        # return list of images as an numpy array
-        return np.array([road_arr, minimap_arr, speed_arr], dtype=object)
+        # return list of images as a list
+        return [road_arr, minimap_arr, speed_arr]
 
     def main(self):
         name = input("enter the name for the training file: ")
@@ -72,13 +72,13 @@ class CreateData:
         if not os.path.exists(file):
             print("new data created!")
             os.mkdir(file)
-            training_data_X = np.array([])
-            training_data_Y = np.array([])
+            training_data_X = []
+            training_data_Y = []
 
         else:
             print("data already exists! appending to the data.")
-            training_data_X = np.load(file + f"\\{name}X.npy", allow_pickle=True)
-            training_data_Y = np.load(file + f"\\{name}y.npy", allow_pickle=True)
+            training_data_X = list(np.load(file + f"\\{name}X.npy", allow_pickle=True))
+            training_data_Y = list(np.load(file + f"\\{name}y.npy", allow_pickle=True))
 
         for i in range(3, 0, -1):
             print("data collection starts in {}".format(i))
@@ -86,13 +86,14 @@ class CreateData:
 
         print("started collecting data!")
         while True:
-            key = self.key_press()          # key is an one hot encoded array
+            key = self.key_press()          # key is a one hot encoded array
             image = self.get_screen()       # image is an array of three elements
-            training_data_X = np.append(training_data_X, image)
-            training_data_Y = np.append(training_data_Y, key)
+
+            training_data_X.append(image)
+            training_data_Y.append(key)
 
             # code snippet by sentdex <3
-            if len(training_data_X) % 500 == 0:
+            if len(training_data_X) % 3000 == 0:
                 print("training files saved! frame count: {}".format(len(training_data_X)))
                 np.save(file + f"\\{name}X.npy", training_data_X)
                 np.save(file + f"\\{name}Y.npy", training_data_Y)
@@ -101,8 +102,9 @@ class CreateData:
                 break
 
             # you can test your fps through uncommenting these lines
-            # print("fps:", round(1/(time.time() - self.last_time)))
-            # self.last_time = time.time()
+            #print("fps:", round(1/(time.time() - self.last_time)))
+            #self.last_time = time.time()
 
-a = CreateData()
-a.main()
+if __name__ == "__main__":
+    a = CreateData()
+    a.main()
