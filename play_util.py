@@ -53,8 +53,3 @@ def ReleaseKey(hexKeyCode):
     ii_.ki = KeyBdInput( 0, hexKeyCode, 0x0008 | 0x0002, 0, ctypes.pointer(extra) )
     x = Input( ctypes.c_ulong(1), ii_ )
     ctypes.windll.user32.SendInput(1, ctypes.pointer(x), ctypes.sizeof(x))
-
-# directx scan codes http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
-# 0x11 = w
-# 0x1E = A
-# 0x20 = D
