@@ -16,9 +16,9 @@ it may not create enough data or play the game right. To check your fps you can 
 class CreateData:
     def __init__(self):
         # places of the screen that are relevant to us
-        self.road = {'left': 150, 'top': 310, 'width': 700, 'height': 200}
-        self.minimap = {'left': 50, 'top': 525, 'width': 210, 'height': 215}
-        self.speed = {'left': 827, 'top': 676, 'width': 73, 'height': 37}
+        self.road = {'left': 120, 'top': 310, 'width': 570, 'height': 110}
+        self.minimap = {'left': 60, 'top': 460, 'width': 125, 'height': 110}
+        self.speed = {'left': 645, 'top': 535, 'width': 67, 'height': 30}
         # variable for seeing fps
         self.last_time = time.time()
 
@@ -42,23 +42,23 @@ class CreateData:
     def get_screen(self):
         with mss.mss() as sct:
                 # take the screenshot of the relevant places on the screen
-                road_sct = sct.grab(self.road)
-                minimap_sct = sct.grab(self.minimap)
-                speed_sct = sct.grab(self.speed)
-                # turn into array for resizing
-                road_arr = np.array(road_sct)
-                minimap_arr = np.array(minimap_sct)
-                speed_arr = np.array(speed_sct)
+                road_arr = np.array(sct.grab(self.road))
+                minimap_arr = np.array(sct.grab(self.minimap))
+                speed_arr = np.array(sct.grab(self.speed))
+
+                road_gray = cv2.cvtColor(road_arr, cv2.COLOR_RGB2GRAY)
+                minimap_gray = cv2.cvtColor(minimap_arr, cv2.COLOR_RGB2GRAY)
+                speed_gray = cv2.cvtColor(speed_arr, cv2.COLOR_RGB2GRAY)
+
                 # resize
-                road_arr = list(cv2.resize(road_arr,(120,60)))
-                minimap_arr = list(cv2.resize(minimap_arr, (50, 50)))
-                speed_arr = list(cv2.resize(speed_arr, (15, 15)))
+                road_arr = list(cv2.resize(road_gray,(120,60)))
+                minimap_arr = list(cv2.resize(minimap_gray, (50, 50)))
+                speed_arr = list(cv2.resize(speed_gray, (15, 15)))
 
                 # uncomment the next lines to test if road is visible if it is not make the needed adjustments
-                #cv2.imshow("window", road_arr)
+                #cv2.imshow("window", np.array(road_arr))
                 #if cv2.waitKey(25) & 0xFF == ord("q"):
                 #   cv2.destroyAllWindows()
-
 
         # return list of images as a list
         return [road_arr, minimap_arr, speed_arr]
@@ -102,8 +102,8 @@ class CreateData:
                 break
 
             # you can test your fps through uncommenting these lines
-            #print("fps:", round(1/(time.time() - self.last_time)))
-            #self.last_time = time.time()
+            # print("fps:", round(1/(time.time() - self.last_time)))
+            # self.last_time = time.time()
 
 if __name__ == "__main__":
     a = CreateData()
