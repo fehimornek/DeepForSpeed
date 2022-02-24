@@ -1,66 +1,89 @@
 from play_util import *
 from createData import CreateData
-from model_architectures import *
+import model_architectures
 import torch
 import os
 import keyboard
+import numpy as np
+import cv2
 
-model = nvidia_arch()
-model.state_dict(torch.load(os.getcwd() + f"\\trained_models\\default.pth"))
-dataloader = CreateData()
-for i in range(3,0,-1):
-    print(i)
-    time.sleep(1)
-while True:
-    screen = dataloader.get_screen()
-    road, minimap, speed = torch.tensor(screen[0]), torch.tensor(screen[1]), torch.tensor(screen[2])
-    road= torch.permute(road, (2, 1, 0))
-    minimap = torch.permute(minimap, (2, 1, 0))
-    speed = torch.permute(speed, (2, 1, 0))
-    road = road[None, :]
-    minimap = minimap[None, :]
-    speed = speed[None, :]
-    output = model.forward(road/255, minimap/255, speed/255)
+# function that acts as an api between game and the neural network
+def playGame(modelName, trainedModelName):
+    # get the neuralnet from model architectures
+    neural_net = getattr(model_architectures, modelName)
+    neuralnet = neural_net()
+    # check if trained model exists if it does load them else return from the function
+    nn_location = os.getcwd() + f"\\training_data"
+    if os.path.exists(nn_location):
+        neuralnet.state_dict(torch.load(os.getcwd()) + f"\\training_data")
+    else:
+        print("that trained model does not exist")
+        return
+    # read the screen
+    dataloader = CreateData()
+    # wait a little before running the script to give time to open the game
+    for i in range(3,0,-1):
+        print(i)
+        time.sleep(1)
 
-    # directx scan codes http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
-    # 0x11 = w
-    # 0x1E = A
-    # 0x20 = D
-    index = torch.argmax(output)
-    if index == 0:          # press w
-        PressKey(0x11)
-        time.sleep(1)
-        ReleaseKey(0x11)
-        print("forward")
-    elif index == 1:        # press a
-        PressKey(0x1E)
-        time.sleep(1)
-        ReleaseKey(0x1E)
-        print("left")
-    elif index == 2:        # press d
-        PressKey(0x20)
-        time.sleep(1)
-        ReleaseKey(0x20)
-        print("right")
-    elif index == 3:        # press wa
-        PressKey(0x11)
-        PressKey(0x1E)
-        time.sleep(1)
-        ReleaseKey(0x11)
-        ReleaseKey(0x1E)
-        print("forward left")
-    elif index == 4:        # press wd
-        PressKey(0x11)
-        PressKey(0x20)
-        time.sleep(1)
-        ReleaseKey(0x11)
-        ReleaseKey(0x20)
-        print("forward right")
+    # main loop
+    with torch.no_grad():
+        while True:
+            screen = dataloader.get_screen()
+            # turn the screen to tensors
+            road, minimap, speed = torch.tensor(screen[0]), torch.tensor(screen[1]), torch.tensor(screen[2])
+            # some dummy dimension for pytorch
+            road = road[None, None]
+            minimap = minimap[None, None]
+            speed = speed[None, None]
 
-    elif index == 5:        # nothing
-        time.sleep(1)
-        print("do nothing")
+            output = neural_net(road/255, minimap/255, speed/255)
+            print(output)
 
-    # if q is pressed quit
-    if keyboard.is_pressed("q"):
-        break
+            # get the highest probability from the output and do that
+            index = torch.argmax(output)
+            """
+            directx scan codes http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
+            0x11 = w
+            0x1E = A
+            0x20 = D
+            """
+            if index == 0:          # press w
+                PressKey(0x11)
+                time.sleep(1)
+                ReleaseKey(0x11)
+                print("forward")
+            elif index == 1:        # press a
+                PressKey(0x1E)
+                time.sleep(1)
+                ReleaseKey(0x1E)
+                print("left")
+            elif index == 2:        # press d
+                PressKey(0x20)
+                time.sleep(1)
+                ReleaseKey(0x20)
+                print("right")
+            elif index == 3:        # press wa
+                PressKey(0x11)
+                PressKey(0x1E)
+                time.sleep(1)
+                ReleaseKey(0x11)
+                ReleaseKey(0x1E)
+                print("forward left")
+            elif index == 4:        # press wd
+                PressKey(0x11)
+                PressKey(0x20)
+                time.sleep(1)
+                ReleaseKey(0x11)
+                ReleaseKey(0x20)
+                print("forward right")
+
+            elif index == 5:        # nothing
+                time.sleep(1)
+                print("do nothing")
+
+            # if q is pressed quit
+            if keyboard.is_pressed("q"):
+                break
+
+playGame("nvidia_arch", "test" )
