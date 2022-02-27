@@ -1,24 +1,24 @@
 from play_util import *
 from createData import CreateData
-import model_architectures
+from model_architectures import nvidia_arch
 import torch
 import os
 import keyboard
 import numpy as np
-import cv2
 
 # function that acts as an api between game and the neural network
 def playGame(modelName, trainedModelName):
     # get the neuralnet from model architectures
-    neural_net = getattr(model_architectures, modelName)
-    neuralnet = neural_net()
+    neuralnet = nvidia_arch()
     # check if trained model exists if it does load them else return from the function
-    nn_location = os.getcwd() + f"\\training_data"
+    nn_location = os.getcwd() + f"\\trained_models\\{trainedModelName}.pth"
     if os.path.exists(nn_location):
-        neuralnet.state_dict(torch.load(os.getcwd()) + f"\\training_data")
+        neuralnet.load_state_dict(torch.load(nn_location))
+        neuralnet.eval()
     else:
         print("that trained model does not exist")
         return
+
     # read the screen
     dataloader = CreateData()
     # wait a little before running the script to give time to open the game
@@ -33,11 +33,12 @@ def playGame(modelName, trainedModelName):
             # turn the screen to tensors
             road, minimap, speed = torch.tensor(screen[0]), torch.tensor(screen[1]), torch.tensor(screen[2])
             # some dummy dimension for pytorch
+
             road = road[None, None]
             minimap = minimap[None, None]
             speed = speed[None, None]
 
-            output = neural_net(road/255, minimap/255, speed/255)
+            output = neuralnet.forward(road/255, minimap/255, speed/255)
             print(output)
 
             # get the highest probability from the output and do that

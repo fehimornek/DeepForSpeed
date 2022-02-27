@@ -35,7 +35,6 @@ class nvidia_arch(nn.Module):
             nn.ReLU(),
             nn.Conv2d(in_channels=12, out_channels=18, kernel_size=(5, 5), stride=(2, 2)),
             nn.Flatten()
-
         )
         self.conv3 = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=6, kernel_size=(5, 5), stride=(2, 2)),
@@ -44,15 +43,16 @@ class nvidia_arch(nn.Module):
             nn.Flatten()
         )
 
-
         # fully connected dense layers
         self.linear = nn.Sequential(
             # input to the fully connected layer will be a (17x1) image with 64 channels
             nn.Linear(in_features=1454, out_features=100),
+            nn.ReLU(),
             nn.Linear(in_features=100, out_features=50),
+            nn.ReLU(),
             nn.Linear(in_features=50, out_features=10),
-            nn.Linear(in_features=10, out_features=6),
-            nn.LogSoftmax()
+            nn.ReLU(),
+            nn.Linear(in_features=10, out_features=6)
         )
 
     # x1 is road x2 is minimap and x3 is the speedometer
@@ -63,3 +63,4 @@ class nvidia_arch(nn.Module):
         x = torch.concat((x1,x2,x3), dim=1)
         x = self.linear(x)
         return x
+

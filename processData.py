@@ -1,9 +1,10 @@
+import os
 import numpy as np
 import cv2
 import random
 
-training_dataX = list(np.load("training_data/train1/train1X.npy", allow_pickle=True))
-training_dataY = list(np.load("training_data/train1/train1Y.npy", allow_pickle=True))
+training_dataX = list(np.load("training_data/real/realX.npy", allow_pickle=True))
+training_dataY = list(np.load("training_data/real/realY.npy", allow_pickle=True))
 
 idx =0
 forward, left, right, forright, forleft, nthg = [], [], [], [], [], []
@@ -22,7 +23,7 @@ for data in training_dataX:
 
 random.shuffle(forward)
 random.shuffle(nthg)
-forward = [forward[i] for i in range(round(len(forright)*1.5))]
+forward = [forward[i] for i in range(len(forright))]
 nthg = [nthg[i] for i in range(len(forright))]
 
 training_dataX = training_dataX + forward + nthg
@@ -32,5 +33,5 @@ for i in range(len(forward)):
 for i in range(len(nthg)):
     training_dataY.append([0,0,0,0,0,1])
 
-np.save("\\training_data\\processed\\tX.npy", training_dataX)
-np.save("\\training_data\\processed\\tY.np", training_dataY)
+np.save(os.getcwd() + "\\training_data\\processed\\tX.npy", training_dataX)
+np.save(os.getcwd() + "\\training_data\\processed\\tY.npy", training_dataY)

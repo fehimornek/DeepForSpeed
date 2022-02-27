@@ -93,7 +93,7 @@ class CreateData:
             training_data_Y.append(key)
 
             # code snippet by sentdex <3
-            if len(training_data_X) % 3000 == 0:
+            if len(training_data_X) % 1500 == 0:
                 print("training files saved! frame count: {}".format(len(training_data_X)))
                 np.save(file + f"\\{name}X.npy", training_data_X)
                 np.save(file + f"\\{name}Y.npy", training_data_Y)
