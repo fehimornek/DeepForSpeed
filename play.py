@@ -1,15 +1,16 @@
 from play_util import *
 from createData import CreateData
-from model_architectures import nvidia_arch
+import model_architectures
 import torch
 import os
 import keyboard
-import numpy as np
+import time
 
 # function that acts as an api between game and the neural network
 def playGame(modelName, trainedModelName):
     # get the neuralnet from model architectures
-    neuralnet = nvidia_arch()
+    neural_net = getattr(model_architectures, modelName)
+    neuralnet = neural_net()
     # check if trained model exists if it does load them else return from the function
     nn_location = os.getcwd() + f"\\trained_models\\{trainedModelName}.pth"
     if os.path.exists(nn_location):
@@ -33,15 +34,11 @@ def playGame(modelName, trainedModelName):
             # turn the screen to tensors
             road, minimap, speed = torch.tensor(screen[0]), torch.tensor(screen[1]), torch.tensor(screen[2])
             # some dummy dimension for pytorch
-
             road = road[None, None]
             minimap = minimap[None, None]
             speed = speed[None, None]
-
             output = neuralnet.forward(road/255, minimap/255, speed/255)
             print(output)
-
-            # get the highest probability from the output and do that
             index = torch.argmax(output)
             """
             directx scan codes http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
@@ -87,4 +84,4 @@ def playGame(modelName, trainedModelName):
             if keyboard.is_pressed("q"):
                 break
 
-playGame("nvidia_arch", "test" )
+playGame("nvidia_arch", "default" )

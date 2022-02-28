@@ -4,7 +4,6 @@ code taken from: https://stackoverflow.com/questions/14489013/simulate-python-ke
 """
 
 import ctypes
-import time
 
 SendInput = ctypes.windll.user32.SendInput
 
