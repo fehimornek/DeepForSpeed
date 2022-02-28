@@ -20,7 +20,7 @@ def preprocess():
     else:
         print("data doesnt exist!")
         return
-
+    print(len(training_dataY))
     os.mkdir(os.getcwd() + f"\\training_data\\processed\\{data_name}")
 
     forward, right, left, forward_right, forward_left, do_nothing = [], [], [], [], [], []
@@ -28,9 +28,6 @@ def preprocess():
     idx = 0
 
     print("separating data!")
-    # get how many lefts there are because generally left (or right) is pressed the least amount of time. So we
-    # will normalize others based on this
-    countOfLefts = 0
     for data in training_dataX:
         # if data is a forward
         if training_dataY[idx][0] == 1:
@@ -40,33 +37,21 @@ def preprocess():
             if we dont remove them we will just have even more forwards which would be super bad.
             """
             forward.append(data)
-            training_dataX.pop(idx)
-            training_dataY.pop(idx)
 
         elif training_dataY[idx][1] == 1:
             left.append(data)
-            training_dataX.pop(idx)
-            training_dataY.pop(idx)
 
         elif training_dataY[idx][2] == 1:
             right.append(data)
-            training_dataX.pop(idx)
-            training_dataY.pop(idx)
 
         elif training_dataY[idx][3] == 1:       # forward lefts
             forward_left.append(data)
-            training_dataX.pop(idx)
-            training_dataY.pop(idx)
 
         elif training_dataY[idx][4] == 1:       # forward rights
             forward_right.append(data)
-            training_dataX.pop(idx)
-            training_dataY.pop(idx)
 
         elif training_dataY[idx][5] == 1:       # do nothing
             do_nothing.append(data)
-            training_dataX.pop(idx)
-            training_dataY.pop(idx)
 
         # used to move on to the next data
         idx += 1
@@ -75,30 +60,31 @@ def preprocess():
     random.shuffle(do_nothing), random.shuffle(left),random.shuffle(right)
 
     lengths = [len(forward),len(forward_left),len(forward_right),len(do_nothing), len(left), len(right)]
+
     minimum_length = min(lengths)
 
-    balanced_forward = [forward[i] for i in range(minimum_length)]
-    balanced_forward_left = [forward_left[i] for i in range(minimum_length)]
-    balanced_forward_right = [forward_right[i] for i in range(minimum_length)]
-    balanced_do_nothing = [do_nothing[i] for i in range(minimum_length)]
+    balanced_forward = [forward[i] for i in range(round(minimum_length))]
+    balanced_forward_left = [forward_left[i] for i in range(round(minimum_length))]
+    balanced_forward_right = [forward_right[i] for i in range(round(minimum_length))]
+    balanced_do_nothing = [do_nothing[i] for i in range(round(minimum_length))]
     balanced_left = [left[i] for i in range(minimum_length)]
     balanced_right = [right[i] for i in range(minimum_length)]
 
     training_dataX = balanced_forward + balanced_left + balanced_right + \
-                     balanced_forward_left + balanced_forward_right + balanced_do_nothing
+                    balanced_forward_left + balanced_forward_right + balanced_do_nothing
 
-    for i in range(countOfLefts):
-        training_dataY.append([1,0,0,0,0,0])
-    for i in range(countOfLefts):
-        training_dataY.append([0,1,0,0,0,0])
-    for i in range(countOfLefts):
-        training_dataY.append([0,0,1,0,0,0])
-    for i in range(countOfLefts):
-        training_dataY.append([0,0,0,1,0,0])
-    for i in range(countOfLefts):
-        training_dataY.append([0,0,0,0,1,0])
-    for i in range(countOfLefts):
-        training_dataY.append([0,0,0,0,0,1])
+    for i in range(minimum_length):
+       training_dataY.append([1,0,0,0,0,0])
+    for i in range(minimum_length):
+       training_dataY.append([0,1,0,0,0,0])
+    for i in range(minimum_length):
+       training_dataY.append([0,0,1,0,0,0])
+    for i in range(minimum_length):
+       training_dataY.append([0,0,0,1,0,0])
+    for i in range(minimum_length):
+       training_dataY.append([0,0,0,0,1,0])
+    for i in range(minimum_length):
+       training_dataY.append([0,0,0,0,0,1])
 
     permutation = np.arange(len(training_dataX))
     np.random.shuffle(permutation)
