@@ -16,18 +16,20 @@ def training(neural_net_name,  epochs, batches, learning_rate,neural_net_folder_
     training a new neural net.
     """
 
-    # get the training data
-    data_name = input("enter the name of the data: ")
-    file = os.getcwd() + f"\\training_data\\processed\\{data_name}"
-
-    # check if the training file exists,
-    if os.path.exists(file):
-        print("loading training data...")
-        training_data_X = np.load(file + f"\\{data_name}X.npy", allow_pickle=True)
-        training_data_Y = np.load(file + f"\\{data_name}Y.npy", allow_pickle=True)
-    else:
-        print("data doesnt exist at this path!")
-        return
+    ## get the training data
+    #data_name = input("enter the name of the data: ")
+    #file = os.getcwd() + f"\\training_data\\processed\\{data_name}"
+#
+    ## check if the training file exists,
+    #if os.path.exists(file):
+    #    print("loading training data...")
+    #    training_data_X = np.load(file + f"\\{data_name}X.npy", allow_pickle=True)
+    #    training_data_Y = np.load(file + f"\\{data_name}Y.npy", allow_pickle=True)
+    #else:
+    #    print("data doesnt exist at this path!")
+    #    return
+    training_data_X = np.load(os.getcwd() + "\\training_data\\real\\realX.npy", allow_pickle=True)
+    training_data_Y = np.load(os.getcwd() + "\\training_data\\real\\realX.npy", allow_pickle=True)
 
     # get the model from model_architectures
     class_neuralnet = getattr(model_architectures, neural_net_name)
