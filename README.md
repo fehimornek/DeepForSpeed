@@ -27,9 +27,11 @@ There is different ways to use it depending on what you want. Additional info ca
 
 Using models
 
-<img src="https://github.com/edilgin/DeepForSpeed/blob/master/images/flowchart.jpg?raw=true" width=30% height=30% alt="flowchart">
+<img src="https://github.com/edilgin/DeepForSpeed/blob/master/images/flowchart.jpg?raw=true" width=50% height=50% alt="flowchart">
 
 Creating and processing data
+
+<img src="https://github.com/edilgin/DeepForSpeed/blob/master/images/dataFlowchart.jpg?raw=true" width=50% height=50% alt="flowchart">
 
 
 
