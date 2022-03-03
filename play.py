@@ -5,6 +5,11 @@ import torch
 import os
 import keyboard
 import time
+import numpy as np
+
+def calcProb(tensor):
+    return (np.array(tensor)*100) / sum(sum(np.array(tensor)))
+
 
 # function that acts as an api between game and the neural network
 def playGame(modelName, trainedModelName):
@@ -38,7 +43,7 @@ def playGame(modelName, trainedModelName):
             minimap = minimap[None, None]
             speed = speed[None, None]
             output = neuralnet.forward(road/255, minimap/255, speed/255)
-            print(output)
+            print(calcProb(output))
             index = torch.argmax(output)
             """
             directx scan codes http://www.gamespp.com/directx/directInputKeyboardScanCodes.html
@@ -48,40 +53,40 @@ def playGame(modelName, trainedModelName):
             """
             if index == 0:          # press w
                 PressKey(0x11)
-                time.sleep(1)
+                time.sleep(0.1)
                 ReleaseKey(0x11)
                 print("forward")
             elif index == 1:        # press a
                 PressKey(0x1E)
-                time.sleep(1)
+                time.sleep(0.1)
                 ReleaseKey(0x1E)
                 print("left")
             elif index == 2:        # press d
                 PressKey(0x20)
-                time.sleep(1)
+                time.sleep(0.1)
                 ReleaseKey(0x20)
                 print("right")
             elif index == 3:        # press wa
                 PressKey(0x11)
                 PressKey(0x1E)
-                time.sleep(1)
+                time.sleep(0.1)
                 ReleaseKey(0x11)
                 ReleaseKey(0x1E)
                 print("forward left")
             elif index == 4:        # press wd
                 PressKey(0x11)
                 PressKey(0x20)
-                time.sleep(1)
+                time.sleep(0.1)
                 ReleaseKey(0x11)
                 ReleaseKey(0x20)
                 print("forward right")
 
             elif index == 5:        # nothing
-                time.sleep(1)
+                time.sleep(0.1)
                 print("do nothing")
 
             # if q is pressed quit
             if keyboard.is_pressed("q"):
                 break
 
-playGame("nvidia_arch", "default" )
+playGame("nvidia_arch", "processed_default" )

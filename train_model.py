@@ -118,4 +118,4 @@ def training(neural_net_name,  epochs, batches, learning_rate,neural_net_folder_
 
 
 if __name__ == "__main__":
-    training(learning_rate=0.01, epochs=500, neural_net_name="nvidia_arch", batches=32, neural_net_folder_name="default")
+    training(learning_rate=0.0001, epochs=1000, neural_net_name="nvidia_arch", batches=32, neural_net_folder_name="default")

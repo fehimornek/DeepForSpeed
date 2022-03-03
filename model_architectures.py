@@ -46,13 +46,13 @@ class nvidia_arch(nn.Module):
         # fully connected dense layers
         self.linear = nn.Sequential(
             # input to the fully connected layer will be a (17x1) image with 64 channels
-            nn.Linear(in_features=1454, out_features=100),
+            nn.Linear(in_features=1454, out_features=100, bias=False),
             nn.ReLU(),
-            nn.Linear(in_features=100, out_features=50),
+            nn.Linear(in_features=100, out_features=50, bias=False),
             nn.ReLU(),
-            nn.Linear(in_features=50, out_features=10),
+            nn.Linear(in_features=50, out_features=10, bias=False),
             nn.ReLU(),
-            nn.Linear(in_features=10, out_features=6)
+            nn.Linear(in_features=10, out_features=6, bias=False)
         )
 
     # x1 is road x2 is minimap and x3 is the speedometer

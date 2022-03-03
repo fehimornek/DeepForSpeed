@@ -67,7 +67,7 @@ class CreateData:
         name = input("enter the name for the training file: ")
 
         # get current directory and add the data to the training_data folder
-        file = os.getcwd() + "\\DeepForSpeed\\training_data\\{}".format(name)
+        file = os.getcwd() + "\\training_data\\{}".format(name)
 
         if not os.path.exists(file):
             print("new data created!")
@@ -99,6 +99,7 @@ class CreateData:
                 np.save(file + f"\\{name}Y.npy", training_data_Y)
 
             if keyboard.is_pressed("q"):            # if q is pressed data collection ends
+                print("stopping data collection!")
                 break
 
             # you can test your fps through uncommenting these lines
