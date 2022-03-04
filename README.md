@@ -1,4 +1,4 @@
-# DeepForSpeed: A self-driving car in Need For Speed: Most Wanted
+# DeepForSpeed: A self-driving car in Need For Speed
 ## Why i built this project?
 The inspiration comes from how Nvidia built a self-driving car with just a single convolutional
 neural network instead of many fancy algorithms combined. Here my goal is to replicate 
@@ -17,9 +17,11 @@ not an accurate one) that you can test your own neural networks at and conduct s
 > 
 > Matplotlib
 > 
+> Need For Speed: Most Wanted 2005
+> 
 > Base architecture
 > 
-> <img src="https://github.com/edilgin/DeepForSpeed/blob/master/images/nvidia_arch.png?raw=true" width=30% height=30% alt="Nvidia's architecture">
+> <img src="https://github.com/edilgin/DeepForSpeed/blob/master/images/nvidia_arch.png?raw=true" width=40% height=40% alt="Nvidia's architecture">
 
 
 ## How to use it
@@ -46,8 +48,7 @@ simpler.
 > To see how networks perform add tensorflow board
 > 
 > Try saving images as rgb and see if it makes a difference
-> 
-> Add data augmentation functions
+>
 > 
 > Try training with slight imbalanced data
 > 
