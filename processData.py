@@ -2,12 +2,15 @@ import os
 import numpy as np
 import random
 
+from PIL import Image, ImageEnhance
+
 """
 The training data is quite imbalanced because most of the time we are just
 pressing the forward key and maybe only half of the time we are steering. If our convnet
 sees this data it will be super biased to just going forward all the time so we need to change that.
 Amount of do nothings is also quite big too this also needs to be taken care of.
 """
+
 
 def preprocess():
     data_name = input("which data do you want to preprocess: ")
@@ -95,7 +98,84 @@ def preprocess():
 
     np.save(os.getcwd() + f"\\training_data\\processed\\{data_name}\\{data_name}X.npy", dataX_shuffled)
     np.save(os.getcwd() + f"\\training_data\\processed\\{data_name}\\{data_name}Y.npy", dataY_shuffled)
-    print("saved the data!")
+    print("balanced data saved!")
+
+"""
+Augmentations
+1-change brightness values
+2-flip the images when going either to right or left to create more turning data
+might add rotation by a small degree
+"""
+
+def augmentData():
+    data_name = input("what data do you want to augment: ")
+    img_path = os.getcwd() + f"\\training_data\\processed\\{data_name}"
+
+    # load data in a safe matter
+    if os.path.exists(img_path):
+        print("loading data!")
+        imageData = np.load(img_path + f"\\{data_name}X.npy", allow_pickle=True)
+        labels = np.load(img_path + f"\\{data_name}Y.npy", allow_pickle=True)
+    else:
+        print("data doesnt exist!")
+        return
+
+    new_images = []
+    new_labels = []
+
+    print("processing darker versions of images...")
+    # for every image add that image that's %40 darker
+    for i in range(len(imageData)):
+        # get every individual image
+        image = np.array(imageData[i][0])
+        image_normal = Image.fromarray(image, mode="L")
+        # get a new image that has %60 of the originals brightness
+        img = ImageEnhance.Brightness(image_normal)
+        image_dark = img.enhance(0.6)
+        # add the new image to the data list
+        image_arr = np.array(image_dark)
+        new_images.append([image_arr, imageData[i][1], imageData[i][2]])
+        new_labels.append(labels[i])
+
+    """
+    for images where label is either right, left, forward right or forward left we will flip the images.
+    example: if the images label is left then when we flip it, the flipped image will have label right.
+    """
+    print("processing flipped images!")
+    for i in range(len(imageData)):
+        label = labels[i]
+        # if label is not forward and do nothing
+        if label[0] == 0 and label[-1] == 0:
+            # take road and minimap images and flip them
+            road_image = np.array(imageData[i][0])
+            minimap_image = np.array(imageData[i][1])
+            road_pil = Image.fromarray(road_image, mode="L")
+            minimap_pil = Image.fromarray(minimap_image, mode="L")
+            road_flipped = road_pil.transpose(Image.FLIP_LEFT_RIGHT)
+            minimap_flipped = minimap_pil.transpose(Image.FLIP_LEFT_RIGHT)
+            # add the flipped images to the list
+            new_images.append([road_flipped, minimap_flipped, imageData[i][2]])
+            # get the correct label for the flipped image (logic is explained above)
+            if label[1] == 1:
+                new_labels.append([0,0,1,0,0,0])
+            elif label[2] == 1:
+                new_labels.append([0,1,0,0,0,0])
+            elif label[3] == 1:
+                new_labels.append([0,0,0,0,1,0])
+            elif label[4] == 1:
+                new_labels.append([0,0,0,1,0,0])
+
+    new_image_data = np.concatenate((imageData, new_images))
+    new_label_data = np.concatenate((labels, new_labels))
+    perm = np.arange((len(imageData)))
+    np.random.shuffle(perm)
+    image_shuffled = new_image_data[perm]
+    label_shuffled = new_label_data[perm]
+    folder = input("what your data should be named: ")
+    np.save(os.getcwd() + f"\\training_data\\augmented\\{folder}\\{folder}X.npy", image_shuffled)
+    np.save(os.getcwd() + f"\\training_data\\augmented\\{folder}\\{folder}Y.npy", label_shuffled)
+    print("augmented data saved!")
 
 if __name__ == "__main__":
     preprocess()
+    augmentData()
