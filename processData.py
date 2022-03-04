@@ -172,10 +172,10 @@ def augmentData():
     image_shuffled = new_image_data[perm]
     label_shuffled = new_label_data[perm]
     folder = input("what your data should be named: ")
+    os.mkdir(os.getcwd() + f"\\training_data\\augmented\\{folder}")
     np.save(os.getcwd() + f"\\training_data\\augmented\\{folder}\\{folder}X.npy", image_shuffled)
     np.save(os.getcwd() + f"\\training_data\\augmented\\{folder}\\{folder}Y.npy", label_shuffled)
     print("augmented data saved!")
 
 if __name__ == "__main__":
-    preprocess()
     augmentData()
