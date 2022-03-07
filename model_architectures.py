@@ -1,15 +1,16 @@
 import torch
 import torch.nn as nn
 
-# modified nvidia architecture
+# slightly modified nvidia architecture
 class nvidia_arch(nn.Module):
     """
     1- nvidia doesn't mention any activation function in their paper so i took the liberty to use ReLU.
-    2- nvidia uses 200x66 resolution image but to make things just a little faster and more memory
-    efficient i will be using images of size 185x60
-    3- hyperparameters are also chosen by me because they are not mentioned
-    4- network will also do additional convolutions to understand information from minimap and speedometer
+    2- nvidia uses 200x66 resolution image but to make things just a little faster and more memory.
+    efficient we will be using images of size 120x60 but this might change in the future.
+    3- hyper parameters are also chosen by me because they are not mentioned.
+    4- network will also do additional convolutions to understand information from minimap and speedometer.
     """
+
     def __str__(self):
         return "this is nvidia architecture"
 
