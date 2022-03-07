@@ -141,7 +141,7 @@ def augmentData():
     for images where label is either right, left, forward right or forward left we will flip the images.
     example: if the images label is left then when we flip it, the flipped image will have label right.
     """
-    print("processing flipped images!")
+    print("processing flipped images...")
     for i in range(len(imageData)):
         label = labels[i]
         # if label is not forward and do nothing
@@ -154,7 +154,7 @@ def augmentData():
             road_flipped = road_pil.transpose(Image.FLIP_LEFT_RIGHT)
             minimap_flipped = minimap_pil.transpose(Image.FLIP_LEFT_RIGHT)
             # add the flipped images to the list
-            new_images.append([road_flipped, minimap_flipped, imageData[i][2]])
+            new_images.append([np.array(road_flipped), np.array(minimap_flipped), imageData[i][2]])
             # get the correct label for the flipped image (logic is explained above)
             if label[1] == 1:
                 new_labels.append([0,0,1,0,0,0])
@@ -167,11 +167,13 @@ def augmentData():
 
     new_image_data = np.concatenate((imageData, new_images))
     new_label_data = np.concatenate((labels, new_labels))
-    perm = np.arange((len(imageData)))
+    perm = np.arange((len(new_image_data)))
     np.random.shuffle(perm)
     image_shuffled = new_image_data[perm]
     label_shuffled = new_label_data[perm]
-    folder = input("what your data should be named: ")
+    print("operations complete! previous data amount was", len(imageData), "new data amount is", len(image_shuffled))
+    folder = input("what your data should be saved as: ")
+    print("saving data!")
     os.mkdir(os.getcwd() + f"\\training_data\\augmented\\{folder}")
     np.save(os.getcwd() + f"\\training_data\\augmented\\{folder}\\{folder}X.npy", image_shuffled)
     np.save(os.getcwd() + f"\\training_data\\augmented\\{folder}\\{folder}Y.npy", label_shuffled)

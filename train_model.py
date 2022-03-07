@@ -19,7 +19,7 @@ def training(neural_net_name,  epochs, batches, learning_rate,neural_net_folder_
 
     ## get the training data
     data_name = input("enter the name of the data: ")
-    file = os.getcwd() + f"\\training_data\\processed\\{data_name}"
+    file = os.getcwd() + f"\\training_data\\augmented\\{data_name}"
 
     ## check if the training file exists,
     if os.path.exists(file):
@@ -28,8 +28,6 @@ def training(neural_net_name,  epochs, batches, learning_rate,neural_net_folder_
         training_data_Y = np.load(file + f"\\{data_name}Y.npy", allow_pickle=True)
     else:
         print("data doesnt exist at this path!")
-        return
-
 
     # get the model from model_architectures
     class_neuralnet = getattr(model_architectures, neural_net_name)
@@ -118,4 +116,4 @@ def training(neural_net_name,  epochs, batches, learning_rate,neural_net_folder_
 
 
 if __name__ == "__main__":
-    training(learning_rate=0.0001, epochs=1000, neural_net_name="nvidia_arch", batches=32, neural_net_folder_name="default")
+    training(learning_rate=0.001, epochs=200, neural_net_name="nvidia_arch", batches=32, neural_net_folder_name="defaultRaw")
