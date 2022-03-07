@@ -1,4 +1,5 @@
-# DeepForSpeed: A self-driving car in Need For Speed
+# DeepForSpeed: Data Wanted
+# A self-driving car in Need For Speed
 ## Why I built this project?
 The inspiration comes from how Nvidia built a self-driving car with just a single convolutional
 neural network instead of many fancy algorithms combined. Here my goal is to replicate 
