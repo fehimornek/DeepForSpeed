@@ -50,13 +50,16 @@ TLDR: Basically any improvements are really appreciated.
 
 
 ## For Future Updates:
-- Add tensorflow board 
+- Add tensorflow board
+- Only use np arrays instead of both lists and np arrays in data
 - RGB images instead of gray images
 - Train on more data
 - Increase data resolution
 - Controller or a steering wheel to get the input
 - Different activation functions
 - Try Weight Decay
+- Add merging data function for easing data creation
+- Save models whilst training
 
 ### References:
 paper by nvidia: https://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf
