@@ -19,7 +19,8 @@ def training(neural_net_name,  epochs, batches, learning_rate,neural_net_folder_
 
     ## get the training data
     data_name = input("enter the name of the data: ")
-    file = os.getcwd() + f"\\training_data\\augmented\\{data_name}"
+    data_location = input("which folder do you want to get the data from? (options: raw - balanced - augmented): ")
+    file = os.getcwd() + f"\\training_data\\{data_location}\\{data_name}"
 
     ## check if the training file exists,
     if os.path.exists(file):
@@ -116,4 +117,4 @@ def training(neural_net_name,  epochs, batches, learning_rate,neural_net_folder_
 
 
 if __name__ == "__main__":
-    training(learning_rate=0.001, epochs=200, neural_net_name="nvidia_arch", batches=32, neural_net_folder_name="defaultRaw")
+    training(learning_rate=0.001, epochs=200, neural_net_name="nvidia_arch", batches=32, neural_net_folder_name="defaultBetter")

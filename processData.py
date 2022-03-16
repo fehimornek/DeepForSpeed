@@ -13,8 +13,13 @@ Amount of do nothings is also quite big too this also needs to be taken care of.
 
 
 def preprocess():
+    # this code piece is added for safety and ensures that there always will be the folder
+    check_processed_folder = os.getcwd() + "\\training_data\\balanced"
+    if not os.path.exists(check_processed_folder):
+        os.mkdir(check_processed_folder)
+
     data_name = input("which data do you want to preprocess: ")
-    file = os.getcwd() + f"\\training_data\\{data_name}"
+    file = os.getcwd() + f"\\training_data\\raw\\{data_name}"
 
     if os.path.exists(file):
         print("loading data!")
@@ -23,7 +28,7 @@ def preprocess():
     else:
         print("data doesnt exist!")
         return
-    print(len(training_dataY))
+
     os.mkdir(os.getcwd() + f"\\training_data\\processed\\{data_name}")
 
     forward, right, left, forward_right, forward_left, do_nothing = [], [], [], [], [], []
@@ -96,8 +101,8 @@ def preprocess():
     dataX_shuffled = training_dataX[permutation]
     dataY_shuffled = training_dataY[permutation]
 
-    np.save(os.getcwd() + f"\\training_data\\processed\\{data_name}\\{data_name}X.npy", dataX_shuffled)
-    np.save(os.getcwd() + f"\\training_data\\processed\\{data_name}\\{data_name}Y.npy", dataY_shuffled)
+    np.save(os.getcwd() + f"\\training_data\\balanced\\{data_name}\\{data_name}X.npy", dataX_shuffled)
+    np.save(os.getcwd() + f"\\training_data\\balanced\\{data_name}\\{data_name}Y.npy", dataY_shuffled)
     print("balanced data saved!")
 
 """
@@ -108,10 +113,16 @@ might add rotation by a small degree
 """
 
 def augmentData():
-    data_name = input("what data do you want to augment: ")
-    img_path = os.getcwd() + f"\\training_data\\processed\\{data_name}"
+    # this code piece is added for safety and ensures that there always will be the folder
+    check_augment_folder = os.getcwd() + "\\training_data\\augmented"
+    if not os.path.exists(check_augment_folder):
+        os.mkdir(check_augment_folder)
 
-    # load data in a safe matter
+    data_name = input("what data do you want to augment: ")
+    data_location = input("will you augment raw data or processed data? (options: raw - augmented): ")
+    img_path = os.getcwd() + f"\\training_data\\{data_location}\\{data_name}"
+
+    # load data in a safe manner
     if os.path.exists(img_path):
         print("loading data!")
         imageData = np.load(img_path + f"\\{data_name}X.npy", allow_pickle=True)
@@ -179,5 +190,4 @@ def augmentData():
     np.save(os.getcwd() + f"\\training_data\\augmented\\{folder}\\{folder}Y.npy", label_shuffled)
     print("augmented data saved!")
 
-if __name__ == "__main__":
-    augmentData()
+augmentData()
