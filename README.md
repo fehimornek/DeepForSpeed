@@ -7,6 +7,9 @@ in which different architectures can be tested relatively easily, so it can also
 So it's like a fun driving simulator (of course not an accurate one) that you can test your own neural networks 
 at and maybe conduct some experiments.
 
+## Current Version
+<video src='https://www.youtube.com/watch?v=t0iqfM36mRc' width=180/>
+note: this is a cherry picked example and many times model will not perform this well. Im hoping to change that in future versions.
 
 ## Things used
 > Python 3.9
