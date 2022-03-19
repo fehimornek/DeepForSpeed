@@ -8,7 +8,7 @@ So it's like a fun driving simulator (of course not an accurate one) that you ca
 at and maybe conduct some experiments.
 
 ## Current Version
-<video src='https://www.youtube.com/watch?v=t0iqfM36mRc' width=180/>
+<video src='https://www.youtube.com/watch?v=t0iqfM36mRc' width=180></video>
 note: this is a cherry picked example and many times model will not perform this well. Im hoping to change that in future versions.
 
 ## Things used
