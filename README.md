@@ -7,7 +7,7 @@ in which different architectures can be tested relatively easily, so it can also
 So it's like a fun driving simulator (of course not an accurate one) that you can test your own neural networks 
 at and maybe conduct some experiments.
 
-## Current Version
+## Watch The Latest Version
 [![Watch the video](https://img.youtube.com/vi/t0iqfM36mRc/maxresdefault.jpg)](https://youtu.be/t0iqfM36mRc)
 note: this is a cherry picked example and many times model will not perform this well. Im hoping to change that in future versions.
 
